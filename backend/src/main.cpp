@@ -35,8 +35,8 @@ Stepper yS(yAxisPulPin, yAxisDirPin, yAxisHomePin, yAxisEndPoint);
 Stepper mS(mAxisPulPin, mAxisDirPin, mAxisHomePin, mAxisEndPoint);
 Stepper aS(aAxisPulPin, aAxisDirPin, aAxisHomePin, aAxisEndPoint);
 Gripper aGripper(13, 20, 100);
-// Gripper aPress(13, 20, 100);
-// Gripper dGripper(13, 20, 100);
+Gripper aPress(14, 20, 100);
+Gripper dGripper(15, 20, 100);
 Akku akkuMag(896, 61685, 122373);
 
 Manager step;
