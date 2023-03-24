@@ -83,30 +83,25 @@ void loop()
   mS.UpdateInputStatus();
   aS.UpdateInputStatus();
 
-  // Y-axis moving away from endstop
   isAction("yZuruck")
   {
     xAxis.moveTo(startPoint);
   }
-  // Y-axis moving towards endstop
   else isAction("yVor")
   {
     yAxis.moveTo(yAxisEndPoint);
     yAxis.runSpeedToPosition();
   }
-  // X-axis moving towards endstop
   else isAction("xVor")
   {
     xAxis.moveTo(xAxisEndPoint);
     xAxis.runSpeedToPosition();
   }
-  // X-axis moving away from endstop
   else isAction("xZuruck")
   {
     xAxis.moveTo(startPoint);
     xAxis.runSpeedToPosition();
   }
-  // Both axis stop moving
   else isAction("stop")
   {
     // wst.setAction("grab");
@@ -131,7 +126,6 @@ void loop()
     wst.setAction("grab");
   }
 
-  // magazine
   else isAction("magVor")
   {
     mAxis.moveTo(mAxisEndPoint);
@@ -151,7 +145,6 @@ void loop()
     wst.setAction("armZuruck");
   }
 
-  // arm
   else isAction("armVor")
   {
     aAxis.moveTo(aAxisEndPoint);
@@ -165,10 +158,8 @@ void loop()
     aAxis.runToPosition();
     wst.setAction("release");
   }
-  // All axis move towards endstops
   else isAction("callibrate")
   {
-    // xAxis.setCurrentPosition(0); // Set the current position to 0 steps
     if (xS.getInputStatus())
     {
       digitalWrite(xS.getDirPin(), LOW);
