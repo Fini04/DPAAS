@@ -11,33 +11,8 @@
 #include "./hpp/Gripper.hpp"
 #include "./hpp/akku.hpp"
 
-//  NOTE - Docs Pins
 /*
   Docs for used microcontroller Pins
-
-  X-Axis:
-    PulPin: 16,
-    DirPin: 4,
-    HomePin: 32,
-    EndPos: 310750,
-
-  Y-Axis:
-    PulPin: 18,
-    DirPin: 17,
-    HomePin: 33,
-    EndPos: -332360,
-
-  Mag-Axis:
-    PulPin: 21,
-    DirPin: 19,
-    HomePin: 25,
-    EndPos: 130000,
-
-  Arm-Axis:
-    PulPin: 26,
-    DirPin: 27,
-    HomePin: 23,
-    EndPos: 121855,
 
   Gripper:
     ServoPin: 13,
@@ -50,10 +25,14 @@
     Pos3: 122373,
 */
 
-Stepper xS(16, 4, 32, 310750);
-Stepper yS(18, 17, 33, -332360);
-Stepper mS(21, 19, 25, 130000);
-Stepper aS(26, 27, 23, 123855);
+const int xAxisPulPin = 16, xAxisDirPin = 4, xAxisHomePin = 32, xAxisEndPoint = 310750;
+const int yAxisPulPin = 18, yAxisDirPin = 17, yAxisHomePin = 33, yAxisEndPoint = -332360;
+const int mAxisPulPin = 21, mAxisDirPin = 19, mAxisHomePin = 25, mAxisEndPoint = 130000;
+const int aAxisPulPin = 26, aAxisDirPin = 27, aAxisHomePin = 23, aAxisEndPoint = 123855;
+Stepper xS(xAxisPulPin, xAxisDirPin, xAxisHomePin, xAxisEndPoint);
+Stepper yS(yAxisPulPin, yAxisDirPin, yAxisHomePin, yAxisEndPoint);
+Stepper mS(mAxisPulPin, mAxisDirPin, mAxisHomePin, mAxisEndPoint);
+Stepper aS(aAxisPulPin, aAxisDirPin, aAxisHomePin, aAxisEndPoint);
 Gripper aGripper(13, 20, 100);
 // Gripper aPress(13, 20, 100);
 // Gripper dGripper(13, 20, 100);
@@ -65,12 +44,11 @@ Websocket wst;
 
 int relpos = 11925;
 
-// Define the stepper motor and the pins that is connected to
-// (Typeof driver: with 2 pins, STEP, DIR)
-AccelStepper xAxis(1, 16, 4);
-AccelStepper yAxis(1, 18, 17);
-AccelStepper mag(1, 21, 19);
-AccelStepper arm(1, 26, 27);
+#define drivertype 1
+AccelStepper xAxis(drivertype, xAxisPulPin, xAxisDirPin);
+AccelStepper yAxis(drivertype, yAxisPulPin, yAxisDirPin);
+AccelStepper mAxis(drivertype, mAxisPulPin, mAxisDirPin);
+AccelStepper aAxis(drivertype, aAxisPulPin, aAxisDirPin);
 
 void setup()
 {
@@ -82,13 +60,13 @@ void setup()
   yAxis.setAcceleration(3000);
   yAxis.setCurrentPosition(0);
 
-  mag.setMaxSpeed(20000);
-  mag.setAcceleration(5000);
-  mag.setCurrentPosition(0);
+  mAxis.setMaxSpeed(20000);
+  mAxis.setAcceleration(5000);
+  mAxis.setCurrentPosition(0);
 
-  arm.setMaxSpeed(20000);
-  arm.setAcceleration(5000);
-  arm.setCurrentPosition(0);
+  aAxis.setMaxSpeed(20000);
+  aAxis.setAcceleration(5000);
+  aAxis.setCurrentPosition(0);
 
   wst.socketSetup();
   pinMode(22, OUTPUT); // ON/OFF Stepper
@@ -154,35 +132,35 @@ void loop()
   // magazine
   else isAction("magVor")
   {
-    mag.moveTo(mS.getEndPos());
-    mag.runToPosition();
+    mAxis.moveTo(mS.getEndPos());
+    mAxis.runToPosition();
   }
 
   else isAction("magZuruck")
   {
-    mag.moveTo(0);
-    mag.runToPosition();
+    mAxis.moveTo(0);
+    mAxis.runToPosition();
   }
 
   else isAction("armReinSchieben")
   {
-    arm.moveTo(aS.getEndPos());
-    arm.runToPosition();
+    aAxis.moveTo(aS.getEndPos());
+    aAxis.runToPosition();
     wst.setAction("armZuruck");
   }
 
   // arm
   else isAction("armVor")
   {
-    arm.moveTo(aS.getEndPos());
-    arm.runToPosition();
+    aAxis.moveTo(aS.getEndPos());
+    aAxis.runToPosition();
     wst.setAction("armRausZiehen");
   }
 
   else isAction("armZuruck")
   {
-    arm.moveTo(0);
-    arm.runToPosition();
+    aAxis.moveTo(0);
+    aAxis.runToPosition();
     wst.setAction("release");
   }
   // All axis move towards endstops
@@ -219,7 +197,7 @@ void loop()
     else
     {
       mS.resetSteps();
-      mag.setCurrentPosition(0);
+      mAxis.setCurrentPosition(0);
     }
 
     if (aS.getInputStatus())
@@ -230,7 +208,7 @@ void loop()
     else
     {
       aS.resetSteps();
-      arm.setCurrentPosition(0);
+      aAxis.setCurrentPosition(0);
     }
     step.doStep();
   }
@@ -256,24 +234,24 @@ void loop()
   {
     aGripper.grap();
     delay(1000);
-    arm.moveTo(9925);
-    arm.runToPosition();
+    aAxis.moveTo(9925);
+    aAxis.runToPosition();
     aGripper.release();
     delay(1000);
-    arm.moveTo(0);
-    arm.runToPosition();
+    aAxis.moveTo(0);
+    aAxis.runToPosition();
     wst.setAction("akkuVoll");
   }
   else isAction("akkuLeer")
   {
-    mag.moveTo(akkuMag.getFreePos());
-    mag.runToPosition();
+    mAxis.moveTo(akkuMag.getFreePos());
+    mAxis.runToPosition();
     wst.setAction("armVor");
   }
   else isAction("akkuVoll")
   {
-    mag.moveTo(akkuMag.getFullPos());
-    mag.runToPosition();
+    mAxis.moveTo(akkuMag.getFullPos());
+    mAxis.runToPosition();
     wst.setAction("armReinSchieben");
   }
 
