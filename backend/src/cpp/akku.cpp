@@ -37,7 +37,7 @@ uint Akku::getFullPos()
 // sets new loaded magazine position full
 void Akku::updateCap(uint x, byte full)
 {
-    for (byte i = 0; i < 3; i++)
+    for (byte i = 0; i < sizeof(akkuMagContent); i++)
     {
         if (x == akkuMagPos[i])
         {
