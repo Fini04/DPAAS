@@ -13,14 +13,14 @@ Akku::Akku(uint pPos1, uint pPos2, uint pPos3)
 // returns empty magazine position
 uint Akku::getFreePos()
 {
-    for (size_t i = 0; i < 3; i++)
+    for (size_t i = 0; i < sizeof(akkuMagContent); i++)
     {
         if (akkuMagContent[i] == 0)
         {
             return akkuMagPos[i];
         }
     }
-    // return;
+    return 0;
 }
 // returns full magazine position
 uint Akku::getFullPos()
