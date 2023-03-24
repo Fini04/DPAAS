@@ -29,6 +29,7 @@ const int xAxisPulPin = 16, xAxisDirPin = 4, xAxisHomePin = 32, xAxisEndPoint = 
 const int yAxisPulPin = 18, yAxisDirPin = 17, yAxisHomePin = 33, yAxisEndPoint = -332360;
 const int mAxisPulPin = 21, mAxisDirPin = 19, mAxisHomePin = 25, mAxisEndPoint = 130000;
 const int aAxisPulPin = 26, aAxisDirPin = 27, aAxisHomePin = 23, aAxisEndPoint = 123855;
+const int xAxisRelPoint = xAxisEndPoint / 2, yAxisRelPoint = yAxisEndPoint / 2;
 Stepper xS(xAxisPulPin, xAxisDirPin, xAxisHomePin, xAxisEndPoint);
 Stepper yS(yAxisPulPin, yAxisDirPin, yAxisHomePin, yAxisEndPoint);
 Stepper mS(mAxisPulPin, mAxisDirPin, mAxisHomePin, mAxisEndPoint);
@@ -44,6 +45,7 @@ Websocket wst;
 
 int relpos = 11925;
 
+#define startPoint 0
 #define drivertype 1
 AccelStepper xAxis(drivertype, xAxisPulPin, xAxisDirPin);
 AccelStepper yAxis(drivertype, yAxisPulPin, yAxisDirPin);
@@ -52,21 +54,21 @@ AccelStepper aAxis(drivertype, aAxisPulPin, aAxisDirPin);
 
 void setup()
 {
-  xAxis.setMaxSpeed(15000);    // Set maximum speed value for the stepper
-  xAxis.setAcceleration(5000); // Set acceleration value for the stepper
-  xAxis.setCurrentPosition(0); // Set the current position to 0 steps
+  xAxis.setMaxSpeed(15000);             // Set maximum speed value for the stepper
+  xAxis.setAcceleration(5000);          // Set acceleration value for the stepper
+  xAxis.setCurrentPosition(startPoint); // Set the current position to 0 steps
 
   yAxis.setMaxSpeed(15000);
   yAxis.setAcceleration(3000);
-  yAxis.setCurrentPosition(0);
+  yAxis.setCurrentPosition(startPoint);
 
   mAxis.setMaxSpeed(20000);
   mAxis.setAcceleration(5000);
-  mAxis.setCurrentPosition(0);
+  mAxis.setCurrentPosition(startPoint);
 
   aAxis.setMaxSpeed(20000);
   aAxis.setAcceleration(5000);
-  aAxis.setCurrentPosition(0);
+  aAxis.setCurrentPosition(startPoint);
 
   wst.socketSetup();
   pinMode(22, OUTPUT); // ON/OFF Stepper
@@ -84,36 +86,36 @@ void loop()
   // Y-axis moving away from endstop
   isAction("yZuruck")
   {
-    xAxis.moveTo(0);
+    xAxis.moveTo(startPoint);
   }
   // Y-axis moving towards endstop
   else isAction("yVor")
   {
-    yAxis.moveTo(-332360);
+    yAxis.moveTo(yAxisEndPoint);
     yAxis.runSpeedToPosition();
   }
   // X-axis moving towards endstop
   else isAction("xVor")
   {
-    xAxis.moveTo(310750);
+    xAxis.moveTo(xAxisEndPoint);
     xAxis.runSpeedToPosition();
   }
   // X-axis moving away from endstop
   else isAction("xZuruck")
   {
-    xAxis.moveTo(0);
+    xAxis.moveTo(startPoint);
     xAxis.runSpeedToPosition();
   }
   // Both axis stop moving
   else isAction("stop")
   {
     // wst.setAction("grab");
-    xAxis.moveTo(310750);
+    xAxis.moveTo(xAxisEndPoint);
     // stepper1.runToPosition();
-    yAxis.moveTo(-332360);
+    yAxis.moveTo(yAxisEndPoint);
     // stepper2.runToPosition();
 
-    while (xAxis.currentPosition() != 310750 || yAxis.currentPosition() != -332360)
+    while (xAxis.currentPosition() != xAxisEndPoint || yAxis.currentPosition() != yAxisEndPoint)
     {
       xAxis.run();
       yAxis.run();
@@ -132,19 +134,19 @@ void loop()
   // magazine
   else isAction("magVor")
   {
-    mAxis.moveTo(mS.getEndPos());
+    mAxis.moveTo(mAxisEndPoint);
     mAxis.runToPosition();
   }
 
   else isAction("magZuruck")
   {
-    mAxis.moveTo(0);
+    mAxis.moveTo(startPoint);
     mAxis.runToPosition();
   }
 
   else isAction("armReinSchieben")
   {
-    aAxis.moveTo(aS.getEndPos());
+    aAxis.moveTo(aAxisEndPoint);
     aAxis.runToPosition();
     wst.setAction("armZuruck");
   }
@@ -152,14 +154,14 @@ void loop()
   // arm
   else isAction("armVor")
   {
-    aAxis.moveTo(aS.getEndPos());
+    aAxis.moveTo(aAxisEndPoint);
     aAxis.runToPosition();
     wst.setAction("armRausZiehen");
   }
 
   else isAction("armZuruck")
   {
-    aAxis.moveTo(0);
+    aAxis.moveTo(startPoint);
     aAxis.runToPosition();
     wst.setAction("release");
   }
@@ -224,9 +226,9 @@ void loop()
   }
   else isAction("grab")
   {
-    yAxis.moveTo(0);
+    yAxis.moveTo(startPoint);
     yAxis.runToPosition();
-    xAxis.moveTo(0);
+    xAxis.moveTo(startPoint);
     xAxis.runToPosition();
     wst.setAction("akkuLeer");
   }
@@ -257,10 +259,10 @@ void loop()
 
   else isAction("release")
   {
-    xAxis.moveTo(155375);
-    yAxis.moveTo(-166180);
+    xAxis.moveTo(xAxisRelPoint);
+    yAxis.moveTo(yAxisRelPoint);
 
-    while (xAxis.currentPosition() != 155375 || yAxis.currentPosition() != -166180)
+    while (xAxis.currentPosition() != xAxisRelPoint || yAxis.currentPosition() != yAxisRelPoint)
     {
       xAxis.run();
       yAxis.run();
