@@ -155,8 +155,8 @@
 		>
 		<button class="btn" on:click={() => send('motorAus')}>Motor Aus</button>
 		<button class="btn" on:click={() => send('motorAn')}>Motor An</button>
-		<button class="btn" on:click={() => send('grab')}>Grab</button>
-		<button class="btn" on:click={() => send('release')}>Release</button>
+		<button class="btn" on:click={() => send('armGrab')}>ArmGrab</button>
+		<button class="btn" on:click={() => send('armRelease')}>ArmRelease</button>
 		<button class="btn" on:click={() => send('armReinSchieben')}
 			>Arm reinschieben</button
 		>
