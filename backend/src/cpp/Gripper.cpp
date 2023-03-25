@@ -1,31 +1,24 @@
 #include "./hpp/Gripper.hpp"
 
-Gripper::Gripper(byte pServoPin, byte pGrabPos, byte pReleasePos)
+Gripper::Gripper(byte pServoPin, byte pGripperPos1, byte pGripperPos2)
 {
     servoPin = pServoPin;
-    grabPos = pGrabPos;
-    releasePos = pReleasePos;
+    gripperPos1 = pGripperPos1;
+    gripperPos2 = pGripperPos2;
 }
 
 void Gripper::setup()
 {
     servo.attach(servoPin);
-    release();
-}
-// servo turns out -> gripper grabs
-void Gripper::grap()
-{
-    servo.write(grabPos);
-    released = false;
+    goGripperPos1();
 }
 // servo turns in -> gripper releases
-void Gripper::release()
+void Gripper::goGripperPos1()
 {
-    servo.write(releasePos);
-    released = true;
+    servo.write(gripperPos1);
 }
-// sets gripper status "released"
-bool Gripper::isReleased()
+// servo turns out -> gripper grabs
+void Gripper::goGripperPos2()
 {
-    return released;
+    servo.write(gripperPos2);
 }

@@ -6,14 +6,14 @@ class Gripper
 private:
     Servo servo;
     byte servoPin;
-    byte grabPos;
-    byte releasePos;
+    byte gripperPos1;
+    byte gripperPos2;
     bool released;
 
 public:
-    Gripper(byte pServoPin, byte pClosedPos, byte pOpenPos);
+    Gripper(byte pServoPin, byte pGripperPos1, byte pGripperPos2);
     void setup();
-    void release();
-    void grap();
+    void goGripperPos1();
+    void goGripperPos2();
     bool isReleased();
 };

@@ -34,9 +34,9 @@ Stepper xS(xAxisPulPin, xAxisDirPin, xAxisHomePin, xAxisEndPoint);
 Stepper yS(yAxisPulPin, yAxisDirPin, yAxisHomePin, yAxisEndPoint);
 Stepper mS(mAxisPulPin, mAxisDirPin, mAxisHomePin, mAxisEndPoint);
 Stepper aS(aAxisPulPin, aAxisDirPin, aAxisHomePin, aAxisEndPoint);
-Gripper aGripper(13, 20, 100);
-Gripper aPress(14, 20, 100);
-Gripper dGripper(15, 20, 100);
+Gripper aGripper(13, 100, 20);
+Gripper aPress(14, 0, 100);
+Gripper dGripper(15, 0, 100);
 Akku akkuMag(896, 61685, 122373);
 
 Manager step;
@@ -73,6 +73,8 @@ void setup()
   wst.socketSetup();
   pinMode(22, OUTPUT); // ON/OFF Stepper
   aGripper.setup();
+  aPress.setup();
+  dGripper.setup();
 }
 
 #define isAction(x) if (wst.getAction() == x)
@@ -225,11 +227,11 @@ void loop()
   }
   else isAction("armRausZiehen")
   {
-    aGripper.grap();
+    aGripper.goGripperPos2();
     delay(1000);
     aAxis.moveTo(9925);
     aAxis.runToPosition();
-    aGripper.release();
+    aGripper.goGripperPos1();
     delay(1000);
     aAxis.moveTo(0);
     aAxis.runToPosition();
@@ -268,11 +270,15 @@ void loop()
 
   else isAction("armGrab")
   {
-    aGripper.grap();
+    aGripper.goGripperPos2();
+    aPress.goGripperPos2();
+    dGripper.goGripperPos2();
   }
 
   else isAction("armRelease")
   {
-    aGripper.release();
+    aGripper.goGripperPos1();
+    aPress.goGripperPos1();
+    dGripper.goGripperPos1();
   }
 }
