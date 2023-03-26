@@ -252,10 +252,25 @@ void loop()
 
   else isAction("release")
   {
+    aGripper.goGripperPos2();
+    delay(1000);
     xAxis.moveTo(xAxisRelPoint);
     yAxis.moveTo(yAxisRelPoint);
 
     while (xAxis.currentPosition() != xAxisRelPoint || yAxis.currentPosition() != yAxisRelPoint)
+    {
+      xAxis.run();
+      yAxis.run();
+    }
+
+    aGripper.goGripperPos1();
+
+    delay(1000);
+
+    xAxis.moveTo(xAxisEndPoint);
+    yAxis.moveTo(yAxisEndPoint);
+
+    while (xAxis.currentPosition() != xAxisEndPoint || yAxis.currentPosition() != yAxisEndPoint)
     {
       xAxis.run();
       yAxis.run();
