@@ -11,6 +11,17 @@
 #include "./hpp/Gripper.hpp"
 #include "./hpp/akku.hpp"
 
+#define startPoint 0
+#define powerPin 22
+#define drivertype 1
+#define isAction(x) if (wst.getAction() == x)
+
+const int xAxisPulPin = 16, xAxisDirPin = 4, xAxisHomePin = 32, xAxisEndPoint = 310750;
+const int yAxisPulPin = 18, yAxisDirPin = 17, yAxisHomePin = 33, yAxisEndPoint = -332360;
+const int mAxisPulPin = 21, mAxisDirPin = 19, mAxisHomePin = 25, mAxisEndPoint = 130000;
+const int aAxisPulPin = 26, aAxisDirPin = 27, aAxisHomePin = 23, aAxisEndPoint = 123855;
+const int xAxisRelPoint = xAxisEndPoint / 2, yAxisRelPoint = yAxisEndPoint / 2;
+
 /*
   Docs for used microcontroller Pins
 
@@ -25,11 +36,6 @@
     Pos3: 122373,
 */
 
-const int xAxisPulPin = 16, xAxisDirPin = 4, xAxisHomePin = 32, xAxisEndPoint = 310750;
-const int yAxisPulPin = 18, yAxisDirPin = 17, yAxisHomePin = 33, yAxisEndPoint = -332360;
-const int mAxisPulPin = 21, mAxisDirPin = 19, mAxisHomePin = 25, mAxisEndPoint = 130000;
-const int aAxisPulPin = 26, aAxisDirPin = 27, aAxisHomePin = 23, aAxisEndPoint = 123855;
-const int xAxisRelPoint = xAxisEndPoint / 2, yAxisRelPoint = yAxisEndPoint / 2;
 Stepper xS(xAxisPulPin, xAxisDirPin, xAxisHomePin, xAxisEndPoint);
 Stepper yS(yAxisPulPin, yAxisDirPin, yAxisHomePin, yAxisEndPoint);
 Stepper mS(mAxisPulPin, mAxisDirPin, mAxisHomePin, mAxisEndPoint);
@@ -45,8 +51,6 @@ Websocket wst;
 
 int relpos = 11925;
 
-#define startPoint 0
-#define drivertype 1
 AccelStepper xAxis(drivertype, xAxisPulPin, xAxisDirPin);
 AccelStepper yAxis(drivertype, yAxisPulPin, yAxisDirPin);
 AccelStepper mAxis(drivertype, mAxisPulPin, mAxisDirPin);
@@ -71,13 +75,12 @@ void setup()
   aAxis.setCurrentPosition(startPoint);
 
   wst.socketSetup();
-  pinMode(22, OUTPUT); // ON/OFF Stepper
+  pinMode(powerPin, OUTPUT); // ON/OFF Stepper
   aGripper.setup();
   aPress.setup();
   dGripper.setup();
 }
 
-#define isAction(x) if (wst.getAction() == x)
 void loop()
 {
   xS.UpdateInputStatus();
@@ -88,6 +91,7 @@ void loop()
   isAction("yZuruck")
   {
     xAxis.moveTo(startPoint);
+    yAxis.runSpeedToPosition();
   }
   else isAction("yVor")
   {
@@ -106,11 +110,8 @@ void loop()
   }
   else isAction("stop")
   {
-    // wst.setAction("grab");
     xAxis.moveTo(xAxisEndPoint);
-    // stepper1.runToPosition();
     yAxis.moveTo(yAxisEndPoint);
-    // stepper2.runToPosition();
 
     while (xAxis.currentPosition() != xAxisEndPoint || yAxis.currentPosition() != yAxisEndPoint)
     {
@@ -121,10 +122,6 @@ void loop()
 
   else isAction("start")
   {
-    // yAxis.moveTo(0);
-    // yAxis.runToPosition();
-    // xAxis.moveTo(0);
-    // xAxis.runToPosition();
     wst.setAction("grab");
   }
 
