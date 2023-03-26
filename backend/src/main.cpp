@@ -21,6 +21,9 @@ const int yAxisPulPin = 18, yAxisDirPin = 17, yAxisHomePin = 33, yAxisEndPoint =
 const int mAxisPulPin = 21, mAxisDirPin = 19, mAxisHomePin = 25, mAxisEndPoint = 130000;
 const int aAxisPulPin = 26, aAxisDirPin = 27, aAxisHomePin = 23, aAxisEndPoint = 123855;
 const int xAxisRelPoint = xAxisEndPoint / 2, yAxisRelPoint = yAxisEndPoint / 2;
+const int aGripperPin = 14, aGripperPos1 = 100, aGripperPos2 = 40;
+const int aPressPin = 13, aPressPos1 = 0, aPressPos2 = 75;
+const int dGripperPin = 15, dGripperPos1 = 0, dGripperPos2 = 110;
 
 /*
   Docs for used microcontroller Pins
@@ -40,9 +43,9 @@ Stepper xS(xAxisPulPin, xAxisDirPin, xAxisHomePin, xAxisEndPoint);
 Stepper yS(yAxisPulPin, yAxisDirPin, yAxisHomePin, yAxisEndPoint);
 Stepper mS(mAxisPulPin, mAxisDirPin, mAxisHomePin, mAxisEndPoint);
 Stepper aS(aAxisPulPin, aAxisDirPin, aAxisHomePin, aAxisEndPoint);
-Gripper aGripper(14, 100, 40);
-Gripper aPress(13, 0, 75);
-Gripper dGripper(15, 0, 110);
+Gripper aGripper(aGripperPin, aGripperPos1, aGripperPos2);
+Gripper aPress(aPressPin, aPressPos1, aPressPos2);
+Gripper dGripper(dGripperPin, dGripperPos1, dGripperPos2);
 Akku akkuMag(896, 61685, 122373);
 
 Manager step;
