@@ -34,9 +34,9 @@ Stepper xS(xAxisPulPin, xAxisDirPin, xAxisHomePin, xAxisEndPoint);
 Stepper yS(yAxisPulPin, yAxisDirPin, yAxisHomePin, yAxisEndPoint);
 Stepper mS(mAxisPulPin, mAxisDirPin, mAxisHomePin, mAxisEndPoint);
 Stepper aS(aAxisPulPin, aAxisDirPin, aAxisHomePin, aAxisEndPoint);
-Gripper aGripper(13, 100, 20);
-Gripper aPress(14, 0, 100);
-Gripper dGripper(15, 0, 100);
+Gripper aGripper(14, 100, 40);
+Gripper aPress(13, 0, 75);
+Gripper dGripper(15, 0, 110);
 Akku akkuMag(896, 61685, 122373);
 
 Manager step;
@@ -58,8 +58,8 @@ void setup()
   xAxis.setAcceleration(5000);          // Set acceleration value for the stepper
   xAxis.setCurrentPosition(startPoint); // Set the current position to 0 steps
 
-  yAxis.setMaxSpeed(15000);
-  yAxis.setAcceleration(3000);
+  yAxis.setMaxSpeed(12000);
+  yAxis.setAcceleration(2000);
   yAxis.setCurrentPosition(startPoint);
 
   mAxis.setMaxSpeed(20000);
