@@ -19,10 +19,10 @@
 const int xAxisPulPin = 16, xAxisDirPin = 4, xAxisHomePin = 32, xAxisEndPoint = 310750;
 const int yAxisPulPin = 18, yAxisDirPin = 17, yAxisHomePin = 33, yAxisEndPoint = -332360;
 const int mAxisPulPin = 21, mAxisDirPin = 19, mAxisHomePin = 25, mAxisEndPoint = 130000;
-const int aAxisPulPin = 26, aAxisDirPin = 27, aAxisHomePin = 23, aAxisEndPoint = 123855;
+const int aAxisPulPin = 26, aAxisDirPin = 27, aAxisHomePin = 23, aAxisEndPoint = 123200;
 const int xAxisRelPoint = xAxisEndPoint / 2, yAxisRelPoint = yAxisEndPoint / 2;
 const int aGripperPin = 14, aGripperPos1 = 100, aGripperPos2 = 40;
-const int aPressPin = 13, aPressPos1 = 0, aPressPos2 = 75;
+const int aPressPin = 13, aPressPos1 = 0, aPressPos2 = 75, aPressLenght = 7253;
 const int dGripperPin = 15, dGripperPos1 = 0, dGripperPos2 = 110;
 
 /*
@@ -52,7 +52,7 @@ Manager step;
 
 Websocket wst;
 
-int relpos = 11925;
+int relpos = 12800;
 
 AccelStepper xAxis(drivertype, xAxisPulPin, xAxisDirPin);
 AccelStepper yAxis(drivertype, yAxisPulPin, yAxisDirPin);
@@ -113,14 +113,6 @@ void loop()
   }
   else isAction("stop")
   {
-    xAxis.moveTo(xAxisEndPoint);
-    yAxis.moveTo(yAxisEndPoint);
-
-    while (xAxis.currentPosition() != xAxisEndPoint || yAxis.currentPosition() != yAxisEndPoint)
-    {
-      xAxis.run();
-      yAxis.run();
-    }
   }
 
   else isAction("start")
@@ -142,8 +134,11 @@ void loop()
 
   else isAction("armReinSchieben")
   {
-    aAxis.moveTo(aAxisEndPoint);
+    aAxis.moveTo(aAxisEndPoint - aPressLenght);
     aAxis.runToPosition();
+    aPress.goGripperPos2();
+    delay(500);
+    aPress.goGripperPos1();
     wst.setAction("armZuruck");
   }
 
@@ -229,7 +224,7 @@ void loop()
   {
     aGripper.goGripperPos2();
     delay(1000);
-    aAxis.moveTo(9925);
+    aAxis.moveTo(relpos);
     aAxis.runToPosition();
     aGripper.goGripperPos1();
     delay(1000);
@@ -252,7 +247,7 @@ void loop()
 
   else isAction("release")
   {
-    aGripper.goGripperPos2();
+    dGripper.goGripperPos2();
     delay(1000);
     xAxis.moveTo(xAxisRelPoint);
     yAxis.moveTo(yAxisRelPoint);
@@ -263,7 +258,7 @@ void loop()
       yAxis.run();
     }
 
-    aGripper.goGripperPos1();
+    dGripper.goGripperPos1();
 
     delay(1000);
 
@@ -275,6 +270,7 @@ void loop()
       xAxis.run();
       yAxis.run();
     }
+    wst.setAction("stop");
   }
 
   else isAction("getStepPos")

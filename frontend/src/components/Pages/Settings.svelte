@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { initWebSocket } from '../../ts/websocket';
-	let ip = '192.168.0.0';
+	let ip = '172.18.7.182';
 	function init() {
 		initWebSocket(ip);
 	}
